@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oracle Movie Ball</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            height: 100vh;
+            background: radial-gradient(circle, #68486f, #120814);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #pickBtn {
+            padding: 15px 30px;
+            /* Increased padding */
+            font-size: 20px;
+            /* Increased font size */
+            cursor: pointer;
+            border: none;
+            background-color: #D4AF37;
+            color: #241328;
+            border-radius: 8px;
+            /* Increased border radius */
+            transition: background-color 0.3s ease;
+            margin-top: 30px;
+            /* Increased margin */
+            z-index: 2;
+        }
+
+        #pickBtn:hover {
+            background-color: #B8972E;
+        }
+
+        #resultBox {
+            background-color: #332238;
+            padding: 25px;
+            /* Increased padding */
+            border-radius: 10px;
+            /* Increased border radius */
+            color: #E6E6FA;
+            font-size: 22px;
+            /* Increased font size */
+            text-align: center;
+            opacity: 0;
+            transform: translateX(-100%) scale(0.8) rotateY(60deg);
+            transition: all 1s ease;
+            max-width: 90%;
+            /* Increased max width */
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
+            font-family: 'Georgia', serif;
+            border: 1px solid #4A3352;
+            position: relative;
+        }
+
+        .show-result {
+            opacity: 1 !important;
+            transform: translateX(0) scale(1) rotateY(0) !important;
+        }
+
+        .oracle-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .oracle-ball {
+            width: 350px;
+            /* Increased size */
+            height: 350px;
+            /* Increased size */
+            border-radius: 50%;
+            background: linear-gradient(to bottom, #6A0DAD, #4B0082);
+            box-shadow: 0 0 40px rgba(106, 13, 173, 0.6);
+            position: relative;
+            animation: pulse 2s infinite alternate;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 1000px;
+            z-index: 1;
+        }
+
+        .oracle-stand {
+            width: 200px;
+            /* Increased size */
+            height: 70px;
+            /* Increased size */
+            background: #C2B280;
+            border-top-left-radius: 100px;
+            /* Increased border radius */
+            border-top-right-radius: 100px;
+            /* Increased border radius */
+            margin-top: -15px;
+            /* Adjusted margin */
+            box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
+
+        .headingtext {
+            font-size: 3em;
+            /* Increased font size */
+            color: #E0FFFF;
+            text-shadow: 2px 2px 4px rgba(231, 227, 227, 0.3);
+            margin-bottom: 30px;
+            /* Increased margin */
+            z-index: 2;
+        }
+
+        .witch-hand {
+            position: absolute;
+            width: 250px;
+            /* Increased size */
+            pointer-events: none;
+            opacity: 0.9;
+            z-index: 3;
+            transition: transform 0.5s ease;
+        }
+
+        .witch-hand.left {
+            top: -100px;
+            /* Adjusted top */
+            left: -50px;
+            /* Adjusted left */
+            transform: rotate(10deg);
+        }
+
+        .witch-hand.right {
+            top: -100px;
+            /* Adjusted top */
+            right: -50px;
+            /* Adjusted right */
+            transform: rotate(-10deg);
+        }
+
+        .witch-hand.animate {
+            animation: wiggle 1s infinite alternate;
+        }
+
+        @keyframes wiggle {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(5px) rotate(5deg);
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 8px;
+            /* Increased size */
+            height: 8px;
+            /* Increased size */
+            background: #E0FFFF;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: sparkleFade 1.5s linear forwards;
+        }
+
+        @keyframes sparkleFade {
+            from {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-60px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Media Query for Mobile Devices */
+        @media (max-width: 768px) {
+            .oracle-ball {
+                width: 250px;
+                height: 250px;
+            }
+
+            .oracle-stand {
+                width: 140px;
+                height: 50px;
+                border-top-left-radius: 70px;
+                border-top-right-radius: 70px;
+            }
+
+            .witch-hand {
+                width: 150px;
+            }
+
+            #pickBtn {
+                padding: 12px 25px;
+                font-size: 18px;
+                margin-top: 20px;
+            }
+
+            #resultBox {
+                padding: 20px;
+                font-size: 18px;
+            }
+
+            .headingtext {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="headingtext">🔮 Oracle Movie Ball 🔮</h1>
+    <div class="oracle-container">
+        <img src="/static/hand-left.png" class="witch-hand left" id="leftHand">
+        <img src="/static/hand-right.png" class="witch-hand right" id="rightHand">
+        <div class="oracle-ball" id="oracleBall">
+            <div id="resultBox"></div>
+        </div>
+
+        <div class="oracle-stand"></div>
+    </div>
+    <button id="pickBtn">Reveal My Movie</button>
+
+    <audio id="revealSound" src="/static/whoosh-motion-243505.mp3"></audio>
+
+    <script>
+        let entries = [];
+
+        async function fetchEntries() {
+            const response = await fetch('/get-entries');
+            entries = await response.json();
+        }
+
+        async function updateEntries() {
+            await fetch('/update-entries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(entries)
+            });
+        }
+
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = `${x}px`;
+            sparkle.style.top = `${y}px`;
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 1500);
+        }
+
+        function sparkleTrail(centerX, centerY, count = 15) {
+            for (let i = 0; i < count; i++) {
+                const offsetX = Math.random() * 100 - 50;
+                const offsetY = Math.random() * 100 - 50;
+                createSparkle(centerX + offsetX, centerY + offsetY);
+            }
+        }
+
+        const leftHand = document.getElementById('leftHand');
+        const rightHand = document.getElementById('rightHand');
+
+        async function pickRandomEntry() {
+            const resultBox = document.getElementById('resultBox');
+            const oracleBall = document.getElementById('oracleBall');
+            const sound = document.getElementById('revealSound');
+
+            resultBox.classList.remove('show-result');
+            resultBox.innerHTML = 'Consulting the spirits...';
+
+            // Animate the hands
+            leftHand.classList.add('animate');
+            rightHand.classList.add('animate');
+
+            if (entries.length === 0) {
+                await fetchEntries();
+            }
+
+            let available = entries.filter(entry => !entry.picked);
+
+            if (available.length === 0) {
+                resultBox.innerHTML = 'All movies have been picked!';
+                resultBox.classList.add('show-result');
+                leftHand.classList.remove('animate');
+                rightHand.classList.remove('animate');
+                return;
+            }
+
+            setTimeout(async () => {
+                const choice = available[Math.floor(Math.random() * available.length)];
+                choice.picked = true;
+                resultBox.textContent = choice.text;
+                resultBox.classList.add('show-result');
+                sound.play();
+
+                const rect = oracleBall.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                sparkleTrail(centerX, centerY);
+
+                await updateEntries();
+
+                // Stop hand animation
+                leftHand.classList.remove('animate');
+                rightHand.classList.remove('animate');
+            }, 2000);
+        }
+
+
+        const pickBtn = document.getElementById('pickBtn');
+        pickBtn.addEventListener('click', pickRandomEntry);
+
+        fetchEntries();
+    </script>
+</body>
+
+</html>
